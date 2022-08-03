@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="{%static 'todos/styles.css'%}">
+
+</head>
+<body class="bg-secondary">
+    
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-8 offset-md-2">
+                <div class="card bg-dark">
+                    
+                    <div class="card-header shadow-sm bg-dark">
+                        <h1 class="display-5 text-success"><i class="fas fa-check-double"></i> Todos</h1>
+                       
+                    </div>
+                    <div class="card-body">
+                      <ul class="list-group">
+                        <li class="list-group-item bg-secondary">
+                            <form action="{% url 'insert_todo_item' %}" method="POST" autocomplete="off">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                  <input type="text" class="form-control" name="content" placeholder="Enter item here..." id="itm">
+                                  <div class="input-group-append text-info">
+                                      <span class="input-group-text bg-dark py-0">
+                                          <button type="submit" class="btn btn-sm text-success" id="btn" disabled>
+                                              <i class="fa fa-plus-circle fa-lg"></i>
+                                          </button>
+                                      </span>
+                                  </div>
+                                </div>
+                            </form>
+                        </li>
+                          {% for todo in todo_list%}
+                          <li class="list-group-item"> {{todo.content}}
+                              <form action="{%url 'delete_todo_item' todo.id %}" method="post" class="float-right d-inline">
+                                {%csrf_token%}
+                                  <button onclick="return confirm('Are you sure you want to delete this record {{todo.content}}?')" type="submit" class="btn">
+                                     <i class="far fa-trash-alt fa-lg text-danger float-right"></i>
+                                  </button>
+                              </form>
+                              <form action="" method="post" class="float-right d-inline">
+                                {%csrf_token%}
+                                  <button onclick="return confirm('Are you sure you want to check this record {{todo.content}}? as complete?')" type="submit" class="btn">
+                                    <i class="far fa-check-circle fa-lg text-success float-left"></i>
+                                  </button>
+                              </form>
+                          </li>
+                          {%empty%}
+                          <li class="list-group-item">
+                              <span class="font-italic">No todo item found</span>
+                          </li>
+                  
+                          {% endfor %}
+                          
+                      </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script>
+
+
+        var item = document.getElementById('itm'); 
+        var button = document.getElementById('btn');  
+
+        var input =  document.querySelectorAll('.form-control'); //GIVES AN ARRAY OF ALL ELEMENTS IN THE CLASS...IT RETURNS A NODE LIST
+        var hasValue = false;
+        input.forEach((Element)=>{
+              this.addEventListener('input',(e)=>{  //ON THE EVENT OF INPUTTING
+                  for(let i=0; i < input.length; i++){
+                      if(input[i].value == ''){ //IF ANY OF THE INPUTS ARE LEFT EMPTY, THE BUTTON IS DISABLED
+                        hasValue = false;
+                        break; //YOU CANNOT USE BREAK IN FOREACH LOOP. ONLY FOR LOOP
+                      }else{ //HAS PASSED THE FIRST CRITERIA FOR BUTTON ENABLEMENT
+                        hasValue = true;
+                      }
+                  }
+                  if(hasValue == true){  //ALL INPUTS HAVE VALUES
+                        button.disabled = false; //THE BUTTON IS ENABLED
+                     
+                  }else{
+                    button.disabled = true; //THE BUTTON IS DISABLED
+                 }
+                  
+              });
+            });
+           
+    </script>
+</body>
+</html>
+    
